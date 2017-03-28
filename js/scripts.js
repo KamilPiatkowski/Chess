@@ -1,14 +1,17 @@
 
+
 function makeBoard() {
     console.log("TEST: Make Board")
     var boardElem = document.querySelector(".board");
     boardElem.innerHTML = "";
     var boardSize = document.querySelector("#boardsize").value;
     console.log("TEST: Board size: " + boardSize);
+    var boardStyle = document.querySelector(".board");
+    boardStyle.style = "width: " + boardSize * 80 + "px; height: " + boardSize * 80 + "px;";
     var board = new Array(boardSize);
-    for(var i = 0; i < boardSize; i++) {
+    for(let i = 0; i < boardSize; i++) {
         board[i] = new Array(boardSize);
-        for(var j = 0; j < boardSize; j++) {
+        for(let j = 0; j < boardSize; j++) {
             board[i][j] = document.createElement("div");
             console.log("TEST: Board piece: " + i + " " + j);
             if(i % 2 == 0 && j % 2 == 0) {
