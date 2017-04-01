@@ -10,34 +10,31 @@
 
 <body>
     <div id="chessboard" class="board">
-        <!--
-        <div class="white" id="H1"><img src="img/black_rook.png"></div>
-        <div class="black" id="H2"><img src="img/black_knight.png"></div>
-        <div class="white" id="H3"><img src="img/black_bishop.png"></div>
-        <div class="black" id="H4"><img src="img/black_king.png"></div>
-        <div class="white" id="H5"><img src="img/black_queen.png"></div>
-        <div class="black" id="H6"><img src="img/black_bishop.png"></div>
-        <div class="white" id="H7"><img src="img/black_knight.png"></div>
-        <div class="black" id="H8"><img src="img/black_rook.png"></div>
-        
-        <div class="black" id="G1"><img draggable="true" src="img/black_pawn.png"></div>
-        <div class="white" id="G2"><img draggable="true" src="img/black_pawn.png"></div>
-        <div class="black" id="G3"><img draggable="true" src="img/black_pawn.png"></div>
-        <div class="white" id="G4"><img draggable="true" src="img/black_pawn.png"></div>
-        <div class="black" id="G5"><img draggable="true" src="img/black_pawn.png"></div>
-        <div class="white" id="G6"><img draggable="true" src="img/black_pawn.png"></div>
-        <div class="black" id="G7"><img draggable="true" src="img/black_pawn.png"></div>
-        <div class="white" id="G8"><img draggable="true" src="img/black_pawn.png"></div>
-    -->
+
     </div>
 
     <div class="menu">
         <h1>CHESS</h1>
         <br>
-        
         <button id="makeBoardButton" class="button">Make Board</button>
         <br>
-        <button id="setupBoardButton" class="button">Setup Board</button>
+        <button id="normalBoardButton" class="button">Normal Board</button>
+        <br>
+        
+        <h2>Board Size</h2>
+        <p>Please input a number between 1 and 20:</p>
+        <input id="boardsize" value="8">
+        <button id="setBoardSize" class="button">Set Board Size</button>
+        <p id="boardsizetxt"></p>
+        <br>
+        
+        <h2>Random Pieces</h2>
+        <p>Please input a number between 0 and 32:</p>
+        <input id="piecesnumber" value="32">
+        <button id="randomBoardButton" class="button">Random Board</button>
+        <p id="piecesnumbertxt"></p>
+        <br>
+        
     </div>
 
     <script src="js/app.js"></script>
