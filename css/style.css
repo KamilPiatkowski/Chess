@@ -33,11 +33,11 @@
 }
 
 .yellow {
-    border:4px solid #E4A022;
+    border-color: #E4A022;
 }
 
 .red {
-    border:4px solid #E41F22;
+    border-color: #E41F22;
 }
 
 .square:hover {
@@ -60,6 +60,12 @@
     border: 0;
     background-color: #999;
     cursor: pointer;
+    height: 30px;
+}
+
+input {
+    height: 22px;
+    width: 30px;
 }
 
 img {
