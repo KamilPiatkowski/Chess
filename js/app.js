@@ -9,11 +9,6 @@
     var randomBoardButton = document.querySelector("#randomBoardButton");
     var setBoardSizeButton = document.querySelector("#setBoardSize");
 
-    // Will be refactored in future ^^
-    makeBoardButton.onclick = function () {
-        makeBoard();
-    }
-
     normalBoardButton.onclick = function () {
         normalBoard();
     }
@@ -78,7 +73,7 @@
         console.log(normalPiecesArray);
         setupSquares(normalPiecesArray);
     }
-    
+
     function randomBoard() {
         makeBoard();
         var txt = "";
@@ -133,7 +128,7 @@
             if (array[i] instanceof ChessPiece) {
                 squares[i].innerHTML = array[i].img;
             } else {
-                squares[i].innerHTML = '<img class="empty" src="img/empty.png">';
+                squares[i].innerHTML = '<img class="empty" player="empty" src="img/empty.png">';
             }
             if (squares[i].firstChild) {
                 squares[i].firstChild.setAttribute("draggable", "true");
@@ -150,32 +145,38 @@
         switch (type) {
             case "king":
                 console.log("KING " + target);
-                clearMoves();
+                kill(target);
+                //clearMoves();
                 kingMoves(target);
                 break;
             case "queen":
                 console.log("QUEEN " + target);
-                clearMoves();
+                kill(target);
+                //clearMoves();
                 queenMoves(target);
                 break;
             case "bishop":
                 console.log("BISHOP " + target);
-                clearMoves();
+                kill(target);
+                //clearMoves();
                 bishopMoves(target);
                 break;
             case "knight":
                 console.log("KNIGHT " + target);
-                clearMoves();
+                kill(target);
+                //clearMoves();
                 knightMoves(target);
                 break;
             case "rook":
                 console.log("ROOK " + target);
-                clearMoves();
+                kill(target);
+                //clearMoves();
                 rookMoves(target);
                 break;
             case "pawn":
                 console.log("PAWN " + target);
-                clearMoves();
+                kill(target);
+                //clearMoves();
                 if (player == "white") {
                     whitePawnMove(target);
                 }
@@ -184,37 +185,46 @@
                 }
                 break;
             default:
-                clearMoves();
+                kill(target);
+                //clearMoves();
                 console.log("DEFAULT");
         }
     }
 
     //Move functions
+    var killer = "";
+    // To do
     function kill(target) {
-        
+        console.log("target: " + target.parentNode.firstChild.outerHTML);
+        console.log("killer: " + killer.outerHTML);
+        console.log("KILLER: " + killer + "!!!!!!!!!");
+        console.log("target: " + target.parentNode + " yellow: " + target.classList.contains("yellow")
+                        + " red: " + target.classList.contains("red")
+                        + " green: " + target.classList.contains("green"));
+        if(target.classList.contains("yellow") || target.classList.contains("red") || target.classList.contains("green")) {
+            target.parentNode.firstChild.outerHTML = killer.outerHTML;
+        }
+        clearMoves();
     }
-    
+
     function whitePawnMove(target) {
+        killer = target;
         target.parentNode.classList.add("green");
         let squareRow = Number(target.parentNode.getAttribute("row")) - 1;
         let squareColumn = Number(target.parentNode.getAttribute("column"));
         for (let i = 0; i < chessboard.childNodes.length; i++) {
             if (chessboard.childNodes[i].getAttribute("row") == squareRow &&
                 chessboard.childNodes[i].getAttribute("column") == squareColumn) {
-                if(!chessboard.childNodes[i].firstChild.hasAttribute("player")) {
+                if (chessboard.childNodes[i].firstChild.getAttribute("player") == "empty") {
                     var moves = chessboard.childNodes[i];
                     moves.classList.add("yellow");
                 }
             }
-            if(chessboard.childNodes[i].getAttribute("row") == squareRow &&
-                chessboard.childNodes[i].getAttribute("column") == squareColumn + 1) {
-                if(chessboard.childNodes[i].firstChild.getAttribute("player") == "black") {
-                    chessboard.childNodes[i].classList.add("red");
-                }
-            }
-            if(chessboard.childNodes[i].getAttribute("row") == squareRow &&
-                chessboard.childNodes[i].getAttribute("column") == squareColumn - 1) {
-                if(chessboard.childNodes[i].firstChild.getAttribute("player") == "black") {
+            if ((chessboard.childNodes[i].getAttribute("row") == squareRow &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn + 1) ||
+                (chessboard.childNodes[i].getAttribute("row") == squareRow &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn - 1)) {
+                if (chessboard.childNodes[i].firstChild.getAttribute("player") == "black") {
                     chessboard.childNodes[i].classList.add("red");
                 }
             }
@@ -223,26 +233,23 @@
     }
 
     function blackPawnMove(target) {
+        killer = target;
         target.parentNode.classList.add("green");
         let squareRow = Number(target.parentNode.getAttribute("row")) + 1;
         let squareColumn = Number(target.parentNode.getAttribute("column"));
         for (let i = 0; i < chessboard.childNodes.length; i++) {
             if (chessboard.childNodes[i].getAttribute("row") == squareRow &&
                 chessboard.childNodes[i].getAttribute("column") == squareColumn) {
-                if(!chessboard.childNodes[i].firstChild.hasAttribute("player")) {
+                if (chessboard.childNodes[i].firstChild.getAttribute("player") == "empty") {
                     var moves = chessboard.childNodes[i];
                     moves.classList.add("yellow");
                 }
             }
-            if(chessboard.childNodes[i].getAttribute("row") == squareRow &&
-                chessboard.childNodes[i].getAttribute("column") == squareColumn + 1) {
-                if(chessboard.childNodes[i].firstChild.getAttribute("player") == "white") {
-                    chessboard.childNodes[i].classList.add("red");
-                }
-            }
-            if(chessboard.childNodes[i].getAttribute("row") == squareRow &&
-                chessboard.childNodes[i].getAttribute("column") == squareColumn - 1) {
-                if(chessboard.childNodes[i].firstChild.getAttribute("player") == "white") {
+            if ((chessboard.childNodes[i].getAttribute("row") == squareRow &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn + 1) ||
+                (chessboard.childNodes[i].getAttribute("row") == squareRow &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn - 1)) {
+                if (chessboard.childNodes[i].firstChild.getAttribute("player") == "white") {
                     chessboard.childNodes[i].classList.add("red");
                 }
             }
@@ -251,6 +258,7 @@
     }
 
     function kingMoves(target) {
+        killer = target;
         target.parentNode.classList.add("green");
         let squareRow = Number(target.parentNode.getAttribute("row"));
         let squareColumn = Number(target.parentNode.getAttribute("column"));
@@ -259,14 +267,21 @@
                 chessboard.childNodes[i].getAttribute("row") <= squareRow + 1 &&
                 chessboard.childNodes[i].getAttribute("column") >= squareColumn - 1 &&
                 chessboard.childNodes[i].getAttribute("column") <= squareColumn + 1) {
-                var moves = chessboard.childNodes[i];
-                moves.classList.add("yellow");
+                if (target.getAttribute("player") == chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    console.log(target.getAttribute("player"));
+                } else if ("empty" == chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    var moves = chessboard.childNodes[i];
+                    moves.classList.add("yellow");
+                } else if (target.getAttribute("player") != chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    var moves = chessboard.childNodes[i];
+                    moves.classList.add("red");
+                }
             }
         }
-        target.parentNode.classList.remove("yellow");
     }
-
+    // To fix
     function queenMoves(target) {
+        killer = target;
         target.parentNode.classList.add("green");
         let squareRow = Number(target.parentNode.getAttribute("row"));
         let squareColumn = Number(target.parentNode.getAttribute("column"));
@@ -275,14 +290,21 @@
                 chessboard.childNodes[i].getAttribute("row") < chessboard.childNodes.length ||
                 chessboard.childNodes[i].getAttribute("column") > chessboard.childNodes.length ||
                 chessboard.childNodes[i].getAttribute("column") < chessboard.childNodes.length) {
-                var moves = chessboard.childNodes[i];
-                moves.classList.add("yellow");
+                if (target.getAttribute("player") == chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    console.log(target.getAttribute("player"));
+                } else if ("empty" == chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    var moves = chessboard.childNodes[i];
+                    moves.classList.add("yellow");
+                } else if (target.getAttribute("player") != chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    var moves = chessboard.childNodes[i];
+                    moves.classList.add("red");
+                }
             }
         }
-        target.parentNode.classList.remove("yellow");
     }
-
+    // To fix
     function bishopMoves(target) {
+        killer = target;
         target.parentNode.classList.add("green");
         let squareRow = Number(target.parentNode.getAttribute("row"));
         let squareColumn = Number(target.parentNode.getAttribute("column"));
@@ -296,9 +318,15 @@
                         chessboard.childNodes[i].getAttribute("column") == squareColumn + j) ||
                     (chessboard.childNodes[i].getAttribute("row") == squareRow + j &&
                         chessboard.childNodes[i].getAttribute("column") == squareColumn - j)) {
-                    var moves = chessboard.childNodes[i];
-                    console.log(moves);
-                    moves.classList.add("yellow");
+                    if (target.getAttribute("player") == chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                        console.log(target.getAttribute("player"));
+                    } else if ("empty" == chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                        var moves = chessboard.childNodes[i];
+                        moves.classList.add("yellow");
+                    } else if (target.getAttribute("player") != chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                        var moves = chessboard.childNodes[i];
+                        moves.classList.add("red");
+                    }
                 }
             }
         }
@@ -306,6 +334,7 @@
     }
 
     function knightMoves(target) {
+        killer = target;
         target.parentNode.classList.add("green");
         let squareRow = Number(target.parentNode.getAttribute("row"));
         let squareColumn = Number(target.parentNode.getAttribute("column"));
@@ -326,13 +355,21 @@
                     chessboard.childNodes[i].getAttribute("column") == squareColumn + 2) ||
                 (chessboard.childNodes[i].getAttribute("row") == squareRow - 1 &&
                     chessboard.childNodes[i].getAttribute("column") == squareColumn - 2)) {
-                var moves = chessboard.childNodes[i];
-                moves.classList.add("yellow");
+                if (target.getAttribute("player") == chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    console.log(target.getAttribute("player"));
+                } else if ("empty" == chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    var moves = chessboard.childNodes[i];
+                    moves.classList.add("yellow");
+                } else if (target.getAttribute("player") != chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    var moves = chessboard.childNodes[i];
+                    moves.classList.add("red");
+                }
             }
         }
     }
 
     function rookMoves(target) {
+        killer = target;
         target.parentNode.classList.add("green");
         let squareRow = Number(target.parentNode.getAttribute("row"));
         let squareColumn = Number(target.parentNode.getAttribute("column"));
@@ -343,8 +380,15 @@
                 chessboard.childNodes[i].getAttribute("column") == squareColumn &&
                 (chessboard.childNodes[i].getAttribute("row") > squareRow ||
                     chessboard.childNodes[i].getAttribute("row") < squareRow)) {
-                var moves = chessboard.childNodes[i];
-                moves.classList.add("yellow");
+                if (target.getAttribute("player") == chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    console.log(target.getAttribute("player"));
+                } else if ("empty" == chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    var moves = chessboard.childNodes[i];
+                    moves.classList.add("yellow");
+                } else if (target.getAttribute("player") != chessboard.childNodes[i].firstChild.getAttribute("player")) {
+                    var moves = chessboard.childNodes[i];
+                    moves.classList.add("red");
+                }
             }
         }
     }
@@ -363,7 +407,7 @@
     var blackArmy = [BRook1, BKnight1, BBishop1, BKing, BQueen, BBishop2, BKnight2, BRook2, BPawn1, BPawn2, BPawn3, BPawn4, BPawn5, BPawn6, BPawn7, BPawn8];
     var emptyArray = [, , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , ];
 
-    var WKing = new ChessPiece("WKing", "white", '<img id="BKing" class="king" player="white" src="img/white_king.png">', "king");
+    var WKing = new ChessPiece("WKing", "white", '<img id="WKing" class="king" player="white" src="img/white_king.png">', "king");
     var WQueen = new ChessPiece("WQueen", "white", '<img id="WQueen" class="queen" player="white" src="img/white_queen.png">', "queen");
     var WBishop1 = new ChessPiece("WBishop1", "white", '<img id="WBishop1" class="bishop" player="white" src="img/white_bishop.png">', "bishop");
     var WBishop2 = new ChessPiece("WBishop2", "white", '<img id="WBishop2" class="bishop" player="white" src="img/white_bishop.png">', "bishop");
@@ -399,7 +443,7 @@
 
 })();
 
-// Drag & drop - to do
+// Drag & drop
 function pieceDragStart(event) {
     clearMoves();
     event.dataTransfer.setData("img", event.target.id);
@@ -414,25 +458,24 @@ function pieceDragOver(event) {
 function pieceLeave(event) {
     event.target.classList.remove("green");
 }
-// To fix...
+
 function pieceDrop(event) {
     event.preventDefault();
     var image = event.dataTransfer.getData("img");
-    //event.target.appendChild(document.getElementById(image));
     var movedPiece = document.getElementById(image)
     console.log("outer html: " + event.target.outerHTML);
     console.log("inner html: " + event.target.outerHTML);
     console.log("moved piece: " + movedPiece.outerHTML);
     event.target.outerHTML = movedPiece.outerHTML;
-    
 }
 
 function pieceDragEnd(event) {
-    event.target.parentNode.removeChild(event.target);
+    event.target.outerHTML = '<img class="empty" player="empty" src="img/empty.png">';
 }
 
 function clearMoves() {
     for (let i = 0; i < chessboard.childNodes.length; i++) {
         chessboard.childNodes[i].classList.remove("red", "yellow", "green");
     }
+    console.log("clear !");
 }
