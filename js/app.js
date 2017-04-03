@@ -290,6 +290,7 @@
                 chessboard.childNodes[i].getAttribute("row") < chessboard.childNodes.length ||
                 chessboard.childNodes[i].getAttribute("column") > chessboard.childNodes.length ||
                 chessboard.childNodes[i].getAttribute("column") < chessboard.childNodes.length) {
+                /*
                 if (target.getAttribute("player") == chessboard.childNodes[i].firstChild.getAttribute("player")) {
                     console.log(target.getAttribute("player"));
                 } else if ("empty" == chessboard.childNodes[i].firstChild.getAttribute("player")) {
@@ -299,6 +300,7 @@
                     var moves = chessboard.childNodes[i];
                     moves.classList.add("red");
                 }
+                */
             }
         }
     }
@@ -318,6 +320,7 @@
                         chessboard.childNodes[i].getAttribute("column") == squareColumn + j) ||
                     (chessboard.childNodes[i].getAttribute("row") == squareRow + j &&
                         chessboard.childNodes[i].getAttribute("column") == squareColumn - j)) {
+                    /*
                     if (target.getAttribute("player") == chessboard.childNodes[i].firstChild.getAttribute("player")) {
                         console.log(target.getAttribute("player"));
                     } else if ("empty" == chessboard.childNodes[i].firstChild.getAttribute("player")) {
@@ -327,6 +330,7 @@
                         var moves = chessboard.childNodes[i];
                         moves.classList.add("red");
                     }
+                    */
                 }
             }
         }
@@ -380,6 +384,7 @@
                 chessboard.childNodes[i].getAttribute("column") == squareColumn &&
                 (chessboard.childNodes[i].getAttribute("row") > squareRow ||
                     chessboard.childNodes[i].getAttribute("row") < squareRow)) {
+                /*
                 if (target.getAttribute("player") == chessboard.childNodes[i].firstChild.getAttribute("player")) {
                     console.log(target.getAttribute("player"));
                 } else if ("empty" == chessboard.childNodes[i].firstChild.getAttribute("player")) {
@@ -389,6 +394,7 @@
                     var moves = chessboard.childNodes[i];
                     moves.classList.add("red");
                 }
+                */
             }
         }
     }
