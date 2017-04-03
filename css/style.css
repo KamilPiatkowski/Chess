@@ -40,6 +40,10 @@
     border-color: #E41F22;
 }
 
+.green {
+    border-color: #4FE442;
+}
+
 .square:hover {
     border:4px solid #3CB7E4;
 }

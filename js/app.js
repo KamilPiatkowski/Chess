@@ -51,13 +51,21 @@
             for (let j = 0; j < boardSize; j++) {
                 boardArray[i][j] = document.createElement("div");
                 if (i % 2 == 0 && j % 2 == 0) {
-                    boardArray[i][j].className = "white square row-" + i + " column-" + j;
+                    boardArray[i][j].className = "white square";
+                    boardArray[i][j].setAttribute("row", i);
+                    boardArray[i][j].setAttribute("column", j);
                 } else if (i % 2 == 0 && j % 2 != 0) {
-                    boardArray[i][j].className = "black square row-" + i + " column-" + j;
+                    boardArray[i][j].className = "black square";
+                    boardArray[i][j].setAttribute("row", i);
+                    boardArray[i][j].setAttribute("column", j);
                 } else if (i % 2 != 0 && j % 2 == 0) {
-                    boardArray[i][j].className = "black square row-" + i + " column-" + j;
+                    boardArray[i][j].className = "black square";
+                    boardArray[i][j].setAttribute("row", i);
+                    boardArray[i][j].setAttribute("column", j);
                 } else {
-                    boardArray[i][j].className = "white square row-" + i + " column-" + j;
+                    boardArray[i][j].className = "white square";
+                    boardArray[i][j].setAttribute("row", i);
+                    boardArray[i][j].setAttribute("column", j);
                 }
                 chessboard.appendChild(boardArray[i][j]);
             }
@@ -74,12 +82,21 @@
             if (normalPiecesArray[i] instanceof ChessPiece) {
                 squares[i].innerHTML = normalPiecesArray[i].img;
                 squares[i].onclick = displayMoves;
-                squares[i].ondragstart = pieceDragStart;
-                squares[i].ondragend = pieceDragEnd;
+                //squares[i].ondragstart = pieceDragStart;
+                //squares[i].ondragend = pieceDragEnd;
+                //squares[i].ondrop = pieceDrop;
+                squares[i].setAttribute("ondrop", "pieceDrop(e)");
+                //squares[i].ondragover = pieceDragOver;
+                squares[i].setAttribute("ondragover", "pieceDragOver(e)");
             } else {
                 squares[i].innerHTML = "";
+                squares[i].setAttribute("ondrop", "pieceDrop(e)");
+                squares[i].setAttribute("ondragover", "pieceDragOver(e)");
             }
-            squares[i].setAttribute("draggable", "true");
+            if (squares[i].firstChild) {
+                squares[i].firstChild.setAttribute("draggable", "true");
+                squares[i].firstChild.setAttribute("ondragstart", "pieceDragStart(e)");
+            }
         }
     }
     //It does not work on smaller boards... to fix
@@ -114,12 +131,21 @@
             if (randomPiecesArray[i] instanceof ChessPiece) {
                 squares[i].innerHTML = randomPiecesArray[i].img;
                 squares[i].onclick = displayMoves;
-                squares[i].ondragstart = pieceDragStart;
-                squares[i].ondragend = pieceDragEnd;
+                //squares[i].ondragstart = pieceDragStart;
+                //squares[i].ondragend = pieceDragEnd;
+                //squares[i].ondrop = pieceDrop;
+                squares[i].setAttribute("ondrop", "pieceDrop(e)");
+                //squares[i].ondragover = pieceDragOver;
+                squares[i].setAttribute("ondragover", "pieceDragOver(e)");
             } else {
                 squares[i].innerHTML = "";
+                squares[i].setAttribute("ondrop", "pieceDrop(e)");
+                squares[i].setAttribute("ondragover", "pieceDragOver(e)");
             }
-            squares[i].setAttribute("draggable", "true");
+            if (squares[i].firstChild) {
+                squares[i].firstChild.setAttribute("draggable", "true");
+                squares[i].firstChild.setAttribute("ondragstart", "pieceDragStart(e)");
+            }
         }
     }
 
@@ -129,20 +155,206 @@
         [array[i - 1], array[j]] = [array[j], array[i - 1]];
         }
     }
+
     // Display moves on board - to do
     function displayMoves(e) {
         var target = e.target;
-        target.parentNode.classList.toggle("red");
-        //target.setAttribute("class", "red");
-        console.log("TEST: Piece clicked! " + target.parentNode.getAttribute("class"));
+        var type = target.parentNode.firstChild.getAttribute("class");
+        var player = target.parentNode.firstChild.getAttribute("player");
+        switch (type) {
+            case "king":
+                console.log("KING " + target);
+                clearMoves();
+                kingMoves(target);
+                break;
+            case "queen":
+                console.log("QUEEN " + target);
+                clearMoves();
+                queenMoves(target);
+                break;
+            case "bishop":
+                console.log("BISHOP " + target);
+                clearMoves();
+                bishopMoves(target);
+                break;
+            case "knight":
+                console.log("KNIGHT " + target);
+                clearMoves();
+                knightMoves(target);
+                break;
+            case "rook":
+                console.log("ROOK " + target);
+                clearMoves();
+                rookMoves(target);
+                break;
+            case "pawn":
+                console.log("PAWN " + target);
+                clearMoves();
+                if (player == "white") {
+                    whitePawnMove(target);
+                }
+                if (player == "black") {
+                    blackPawnMove(target);
+                }
+                break;
+            default:
+                console.log("DEFAULT");
+        }
     }
+
+    //Move functions
+    function clearMoves() {
+        for (let i = 0; i < chessboard.childNodes.length; i++) {
+            chessboard.childNodes[i].classList.remove("red", "yellow", "green");
+        }
+    }
+
+    function whitePawnMove(target) {
+        target.parentNode.classList.add("green");
+        let squareRow = Number(target.parentNode.getAttribute("row")) - 1;
+        let squareColumn = Number(target.parentNode.getAttribute("column"));
+        for (let i = 0; i < chessboard.childNodes.length; i++) {
+            if (chessboard.childNodes[i].getAttribute("row") == squareRow &&
+                chessboard.childNodes[i].getAttribute("column") == squareColumn) {
+                var moves = chessboard.childNodes[i];
+                moves.classList.add("yellow");
+            }
+        }
+        console.log("white " + squareRow + " " + squareColumn);
+    }
+
+    function blackPawnMove(target) {
+        target.parentNode.classList.add("green");
+        let squareRow = Number(target.parentNode.getAttribute("row")) + 1;
+        let squareColumn = Number(target.parentNode.getAttribute("column"));
+        for (let i = 0; i < chessboard.childNodes.length; i++) {
+            if (chessboard.childNodes[i].getAttribute("row") == squareRow &&
+                chessboard.childNodes[i].getAttribute("column") == squareColumn) {
+                var moves = chessboard.childNodes[i];
+                moves.classList.add("yellow");
+            }
+        }
+        console.log("white " + squareRow + " " + squareColumn);
+    }
+
+    function kingMoves(target) {
+        target.parentNode.classList.add("green");
+        let squareRow = Number(target.parentNode.getAttribute("row"));
+        let squareColumn = Number(target.parentNode.getAttribute("column"));
+        for (let i = 0; i < chessboard.childNodes.length; i++) {
+            if (chessboard.childNodes[i].getAttribute("row") >= squareRow - 1 &&
+                chessboard.childNodes[i].getAttribute("row") <= squareRow + 1 &&
+                chessboard.childNodes[i].getAttribute("column") >= squareColumn - 1 &&
+                chessboard.childNodes[i].getAttribute("column") <= squareColumn + 1) {
+                var moves = chessboard.childNodes[i];
+                moves.classList.add("yellow");
+            }
+        }
+        target.parentNode.classList.remove("yellow");
+    }
+
+    function queenMoves(target) {
+        target.parentNode.classList.add("green");
+        let squareRow = Number(target.parentNode.getAttribute("row"));
+        let squareColumn = Number(target.parentNode.getAttribute("column"));
+        for (let i = 0; i < chessboard.childNodes.length; i++) {
+            if (chessboard.childNodes[i].getAttribute("row") > chessboard.childNodes.length ||
+                chessboard.childNodes[i].getAttribute("row") < chessboard.childNodes.length ||
+                chessboard.childNodes[i].getAttribute("column") > chessboard.childNodes.length ||
+                chessboard.childNodes[i].getAttribute("column") < chessboard.childNodes.length) {
+                var moves = chessboard.childNodes[i];
+                moves.classList.add("yellow");
+            }
+        }
+        target.parentNode.classList.remove("yellow");
+    }
+
+    function bishopMoves(target) {
+        target.parentNode.classList.add("green");
+        let squareRow = Number(target.parentNode.getAttribute("row"));
+        let squareColumn = Number(target.parentNode.getAttribute("column"));
+        for (let i = 0; i < chessboard.childNodes.length; i++) {
+            for (let j = 0; j < boardSize; j++) {
+                if ((chessboard.childNodes[i].getAttribute("row") == squareRow - j &&
+                        chessboard.childNodes[i].getAttribute("column") == squareColumn - j) ||
+                    (chessboard.childNodes[i].getAttribute("row") == squareRow + j &&
+                        chessboard.childNodes[i].getAttribute("column") == squareColumn + j) ||
+                    (chessboard.childNodes[i].getAttribute("row") == squareRow - j &&
+                        chessboard.childNodes[i].getAttribute("column") == squareColumn + j) ||
+                    (chessboard.childNodes[i].getAttribute("row") == squareRow + j &&
+                        chessboard.childNodes[i].getAttribute("column") == squareColumn - j)) {
+                    var moves = chessboard.childNodes[i];
+                    console.log(moves);
+                    moves.classList.add("yellow");
+                }
+            }
+        }
+        target.parentNode.classList.remove("yellow");
+    }
+
+    function knightMoves(target) {
+        target.parentNode.classList.add("green");
+        let squareRow = Number(target.parentNode.getAttribute("row"));
+        let squareColumn = Number(target.parentNode.getAttribute("column"));
+        for (let i = 0; i < chessboard.childNodes.length; i++) {
+            if ((chessboard.childNodes[i].getAttribute("row") == squareRow + 2 &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn + 1) ||
+                (chessboard.childNodes[i].getAttribute("row") == squareRow + 2 &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn - 1) ||
+                (chessboard.childNodes[i].getAttribute("row") == squareRow - 2 &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn + 1) ||
+                (chessboard.childNodes[i].getAttribute("row") == squareRow - 2 &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn - 1) ||
+                (chessboard.childNodes[i].getAttribute("row") == squareRow + 1 &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn + 2) ||
+                (chessboard.childNodes[i].getAttribute("row") == squareRow + 1 &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn - 2) ||
+                (chessboard.childNodes[i].getAttribute("row") == squareRow - 1 &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn + 2) ||
+                (chessboard.childNodes[i].getAttribute("row") == squareRow - 1 &&
+                    chessboard.childNodes[i].getAttribute("column") == squareColumn - 2)) {
+                var moves = chessboard.childNodes[i];
+                moves.classList.add("yellow");
+            }
+        }
+    }
+
+    function rookMoves(target) {
+        target.parentNode.classList.add("green");
+        let squareRow = Number(target.parentNode.getAttribute("row"));
+        let squareColumn = Number(target.parentNode.getAttribute("column"));
+        for (let i = 0; i < chessboard.childNodes.length; i++) {
+            if ((chessboard.childNodes[i].getAttribute("row") == squareRow &&
+                    (chessboard.childNodes[i].getAttribute("column") > squareColumn ||
+                        chessboard.childNodes[i].getAttribute("column") < squareColumn)) ||
+                chessboard.childNodes[i].getAttribute("column") == squareColumn &&
+                (chessboard.childNodes[i].getAttribute("row") > squareRow ||
+                    chessboard.childNodes[i].getAttribute("row") < squareRow)) {
+                var moves = chessboard.childNodes[i];
+                moves.classList.add("yellow");
+            }
+        }
+    }
+
     // Drag & drop - to do
+    var dragPiece = "";
+
     function pieceDragStart(e) {
-        console.log("Drag: " + e.target);
+        e.dataTransfer.setData("text", e.target.id);
     }
 
     function pieceDragEnd(e) {
-        console.log("Drop: " + e.target);
+        e.preventDefault();
+    }
+
+    function pieceDragOver(e) {
+        e.preventDefault();
+    }
+
+    function pieceDrop(e) {
+        e.preventDefault();
+        var data = e.dataTransfer.getData("text");
+        e.target.appendChild(document.getElementById(data));
     }
 
     // Pieces
