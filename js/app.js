@@ -31,7 +31,6 @@
     var piecesNumber = 10;
 
     // Functions
-
     function makeBoard() {
 
         var txt = "";
@@ -77,29 +76,9 @@
         makeBoard();
         var normalPiecesArray = [BRook1, BKnight1, BBishop1, BKing, BQueen, BBishop2, BKnight2, BRook2, BPawn1, BPawn2, BPawn3, BPawn4, BPawn5, BPawn6, BPawn7, BPawn8, , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , , WPawn1, WPawn2, WPawn3, WPawn4, WPawn5, WPawn6, WPawn7, WPawn8, WRook1, WKnight1, WBishop1, WKing, WQueen, WBishop2, WKnight2, WRook2];
         console.log(normalPiecesArray);
-        var squares = chessboard.querySelectorAll(".square");
-        for (let i = 0; i < squares.length; i++) {
-            if (normalPiecesArray[i] instanceof ChessPiece) {
-                squares[i].innerHTML = normalPiecesArray[i].img;
-                squares[i].onclick = displayMoves;
-                //squares[i].ondragstart = pieceDragStart;
-                //squares[i].ondragend = pieceDragEnd;
-                //squares[i].ondrop = pieceDrop;
-                squares[i].setAttribute("ondrop", "pieceDrop(e)");
-                //squares[i].ondragover = pieceDragOver;
-                squares[i].setAttribute("ondragover", "pieceDragOver(e)");
-            } else {
-                squares[i].innerHTML = "";
-                squares[i].setAttribute("ondrop", "pieceDrop(e)");
-                squares[i].setAttribute("ondragover", "pieceDragOver(e)");
-            }
-            if (squares[i].firstChild) {
-                squares[i].firstChild.setAttribute("draggable", "true");
-                squares[i].firstChild.setAttribute("ondragstart", "pieceDragStart(e)");
-            }
-        }
+        setupSquares(normalPiecesArray);
     }
-    //It does not work on smaller boards... to fix
+    
     function randomBoard() {
         makeBoard();
         var txt = "";
@@ -116,43 +95,49 @@
         var whiteRandomArmy = new Array(armyNumber);
         var blackRandomArmy = new Array(armyNumber);
         for (let i = 0; i < armyNumber; i++) {
-            whiteRandomArmy[i] = whiteArmy[Math.floor(Math.random() * whiteArmy.length)];
-            blackRandomArmy[i] = blackArmy[Math.floor(Math.random() * blackArmy.length)];
+            var randomWhite = Math.floor(Math.random() * whiteArmy.length);
+            var randomBlack = Math.floor(Math.random() * blackArmy.length);
+            whiteRandomArmy[i] = whiteArmy[randomWhite];
+            blackRandomArmy[i] = blackArmy[randomBlack];
+            whiteArmy.splice(randomWhite, 1);
+            blackArmy.splice(randomBlack, 1);
         }
         var emptyRandomArray = new Array(boardSize * boardSize - whiteRandomArmy.length - blackRandomArmy.length);
         for (let i = 0; i < emptyRandomArray.length; i++) {
             emptyRandomArray[i] = null;
         }
         var randomPiecesArray = whiteRandomArmy.concat(blackRandomArmy).concat(emptyRandomArray);
+        console.log(randomPiecesArray);
         shuffle(randomPiecesArray);
-
-        var squares = chessboard.querySelectorAll(".square");
-        for (let i = 0; i < squares.length; i++) {
-            if (randomPiecesArray[i] instanceof ChessPiece) {
-                squares[i].innerHTML = randomPiecesArray[i].img;
-                squares[i].onclick = displayMoves;
-                //squares[i].ondragstart = pieceDragStart;
-                //squares[i].ondragend = pieceDragEnd;
-                //squares[i].ondrop = pieceDrop;
-                squares[i].setAttribute("ondrop", "pieceDrop(e)");
-                //squares[i].ondragover = pieceDragOver;
-                squares[i].setAttribute("ondragover", "pieceDragOver(e)");
-            } else {
-                squares[i].innerHTML = "";
-                squares[i].setAttribute("ondrop", "pieceDrop(e)");
-                squares[i].setAttribute("ondragover", "pieceDragOver(e)");
-            }
-            if (squares[i].firstChild) {
-                squares[i].firstChild.setAttribute("draggable", "true");
-                squares[i].firstChild.setAttribute("ondragstart", "pieceDragStart(e)");
-            }
-        }
+        setupSquares(randomPiecesArray);
     }
 
     function shuffle(array) {
-        for (let i = array.length; i; i--) {
-            let j = Math.floor(Math.random() * i);
-        [array[i - 1], array[j]] = [array[j], array[i - 1]];
+        for (var i = array.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * i);
+            var temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
+        return array;
+    }
+
+    function setupSquares(array) {
+        var squares = chessboard.querySelectorAll(".square");
+        for (let i = 0; i < squares.length; i++) {
+            squares[i].onclick = displayMoves;
+            squares[i].setAttribute("ondrop", "pieceDrop(event)");
+            squares[i].setAttribute("ondragover", "pieceDragOver(event)");
+            squares[i].setAttribute("ondragleave", "pieceLeave(event)");
+            if (array[i] instanceof ChessPiece) {
+                squares[i].innerHTML = array[i].img;
+            } else {
+                squares[i].innerHTML = "";
+            }
+            if (squares[i].firstChild) {
+                squares[i].firstChild.setAttribute("draggable", "true");
+                squares[i].firstChild.setAttribute("ondragstart", "pieceDragStart(event)");
+            }
         }
     }
 
@@ -198,17 +183,12 @@
                 }
                 break;
             default:
+                clearMoves();
                 console.log("DEFAULT");
         }
     }
 
     //Move functions
-    function clearMoves() {
-        for (let i = 0; i < chessboard.childNodes.length; i++) {
-            chessboard.childNodes[i].classList.remove("red", "yellow", "green");
-        }
-    }
-
     function whitePawnMove(target) {
         target.parentNode.classList.add("green");
         let squareRow = Number(target.parentNode.getAttribute("row")) - 1;
@@ -336,27 +316,6 @@
         }
     }
 
-    // Drag & drop - to do
-    var dragPiece = "";
-
-    function pieceDragStart(e) {
-        e.dataTransfer.setData("text", e.target.id);
-    }
-
-    function pieceDragEnd(e) {
-        e.preventDefault();
-    }
-
-    function pieceDragOver(e) {
-        e.preventDefault();
-    }
-
-    function pieceDrop(e) {
-        e.preventDefault();
-        var data = e.dataTransfer.getData("text");
-        e.target.appendChild(document.getElementById(data));
-    }
-
     // Pieces
     class ChessPiece {
         constructor(id, player, img, type) {
@@ -406,3 +365,39 @@
     var BPawn8 = new ChessPiece("BPawn8", "black", '<img id="BPawn8" class="pawn" player="black" src="img/black_pawn.png">', "pawn");
 
 })();
+
+// Drag & drop - to do
+function pieceDragStart(event) {
+    clearMoves();
+    event.dataTransfer.setData("img", event.target.id);
+    console.log(event.target.id);
+}
+
+function pieceDragOver(event) {
+    event.preventDefault();
+    event.target.classList.add("green");
+}
+
+function pieceLeave(event) {
+    event.target.classList.remove("green");
+}
+// To fix...
+function pieceDrop(event) {
+    event.preventDefault();
+    var image = event.dataTransfer.getData("img");
+    //event.target.appendChild(document.getElementById(image));
+    event.target.appendChild(document.getElementById(image));
+    /*
+    var movedPiece = document.getElementById(image)
+    console.log("outer html: " + event.target.outerHTML);
+    console.log("inner html: " + event.target.outerHTML);
+    console.log("moved piece: " + movedPiece.outerHTML);
+    event.target.innerHTML = movedPiece.outerHTML;
+    */
+}
+
+function clearMoves() {
+    for (let i = 0; i < chessboard.childNodes.length; i++) {
+        chessboard.childNodes[i].classList.remove("red", "yellow", "green");
+    }
+}
