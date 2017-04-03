@@ -129,10 +129,11 @@
             squares[i].setAttribute("ondrop", "pieceDrop(event)");
             squares[i].setAttribute("ondragover", "pieceDragOver(event)");
             squares[i].setAttribute("ondragleave", "pieceLeave(event)");
+            squares[i].setAttribute("ondragend", "pieceDragEnd(event)");
             if (array[i] instanceof ChessPiece) {
                 squares[i].innerHTML = array[i].img;
             } else {
-                squares[i].innerHTML = "";
+                squares[i].innerHTML = '<img class="empty" src="img/empty.png">';
             }
             if (squares[i].firstChild) {
                 squares[i].firstChild.setAttribute("draggable", "true");
@@ -189,6 +190,10 @@
     }
 
     //Move functions
+    function kill(target) {
+        
+    }
+    
     function whitePawnMove(target) {
         target.parentNode.classList.add("green");
         let squareRow = Number(target.parentNode.getAttribute("row")) - 1;
@@ -196,8 +201,22 @@
         for (let i = 0; i < chessboard.childNodes.length; i++) {
             if (chessboard.childNodes[i].getAttribute("row") == squareRow &&
                 chessboard.childNodes[i].getAttribute("column") == squareColumn) {
-                var moves = chessboard.childNodes[i];
-                moves.classList.add("yellow");
+                if(!chessboard.childNodes[i].firstChild.hasAttribute("player")) {
+                    var moves = chessboard.childNodes[i];
+                    moves.classList.add("yellow");
+                }
+            }
+            if(chessboard.childNodes[i].getAttribute("row") == squareRow &&
+                chessboard.childNodes[i].getAttribute("column") == squareColumn + 1) {
+                if(chessboard.childNodes[i].firstChild.getAttribute("player") == "black") {
+                    chessboard.childNodes[i].classList.add("red");
+                }
+            }
+            if(chessboard.childNodes[i].getAttribute("row") == squareRow &&
+                chessboard.childNodes[i].getAttribute("column") == squareColumn - 1) {
+                if(chessboard.childNodes[i].firstChild.getAttribute("player") == "black") {
+                    chessboard.childNodes[i].classList.add("red");
+                }
             }
         }
         console.log("white " + squareRow + " " + squareColumn);
@@ -210,8 +229,22 @@
         for (let i = 0; i < chessboard.childNodes.length; i++) {
             if (chessboard.childNodes[i].getAttribute("row") == squareRow &&
                 chessboard.childNodes[i].getAttribute("column") == squareColumn) {
-                var moves = chessboard.childNodes[i];
-                moves.classList.add("yellow");
+                if(!chessboard.childNodes[i].firstChild.hasAttribute("player")) {
+                    var moves = chessboard.childNodes[i];
+                    moves.classList.add("yellow");
+                }
+            }
+            if(chessboard.childNodes[i].getAttribute("row") == squareRow &&
+                chessboard.childNodes[i].getAttribute("column") == squareColumn + 1) {
+                if(chessboard.childNodes[i].firstChild.getAttribute("player") == "white") {
+                    chessboard.childNodes[i].classList.add("red");
+                }
+            }
+            if(chessboard.childNodes[i].getAttribute("row") == squareRow &&
+                chessboard.childNodes[i].getAttribute("column") == squareColumn - 1) {
+                if(chessboard.childNodes[i].firstChild.getAttribute("player") == "white") {
+                    chessboard.childNodes[i].classList.add("red");
+                }
             }
         }
         console.log("white " + squareRow + " " + squareColumn);
@@ -386,14 +419,16 @@ function pieceDrop(event) {
     event.preventDefault();
     var image = event.dataTransfer.getData("img");
     //event.target.appendChild(document.getElementById(image));
-    event.target.appendChild(document.getElementById(image));
-    /*
     var movedPiece = document.getElementById(image)
     console.log("outer html: " + event.target.outerHTML);
     console.log("inner html: " + event.target.outerHTML);
     console.log("moved piece: " + movedPiece.outerHTML);
-    event.target.innerHTML = movedPiece.outerHTML;
-    */
+    event.target.outerHTML = movedPiece.outerHTML;
+    
+}
+
+function pieceDragEnd(event) {
+    event.target.parentNode.removeChild(event.target);
 }
 
 function clearMoves() {
